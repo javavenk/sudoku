@@ -125,6 +125,8 @@ public class SudokuSolver {
                                         }
                                         if (zc == 1 && replace) {
                                             board[a][h][i][z] = board[a][b][c][d];
+                                            possibilities[a][h][i][z].clear();
+                                            updatePossibilities(a,h,i,z);
                                             stateChanged = true;
                                             markSolved(a, h);
                                         }
@@ -159,6 +161,8 @@ public class SudokuSolver {
                                         }
                                         if (zc == 1 && replace) {
                                             board[h][b][z][i] = board[a][b][c][d];
+                                            possibilities[h][b][z][i].clear();
+                                            updatePossibilities(h,b,z,i);
                                             stateChanged = true;
                                             markSolved(h, b);
                                         }
