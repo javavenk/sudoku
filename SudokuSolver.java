@@ -11,11 +11,6 @@ public class SudokuSolver {
                     {{{0, 0, 0}, {2, 4, 0}, {0, 3, 8}}, {{0, 4, 5}, {0, 0, 0}, {0, 9, 8}}, {{0, 0, 0}, {0, 0, 0}, {5, 6, 1}}},
                     {{{4, 0, 6}, {0, 0, 8}, {0, 0, 0}}, {{0, 0, 0}, {9, 0, 0}, {0, 2, 0}}, {{0, 0, 2}, {7, 4, 0}, {0, 9, 6}}}
             };
-            /*{
-                    {{{5, 3, 0}, {0, 0, 0}, {0, 4, 0}}, {{7, 0, 0}, {4, 0, 0}, {3, 0, 0}}, {{9, 0, 4}, {0, 0, 3}, {0, 0, 7}}},
-                    {{{9, 0, 0}, {1, 8, 0}, {0, 0, 0}}, {{0, 4, 5}, {0, 0, 0}, {0, 9, 8}}, {{0, 0, 0}, {0, 0, 0}, {5, 6, 1}}},
-                    {{{4, 0, 6}, {0, 0, 8}, {0, 0, 0}}, {{0, 0, 0}, {9, 0, 0}, {0, 2, 0}}, {{0, 0, 2}, {7, 4, 0}, {0, 9, 6}}}
-            };*/
 
     static List[][][][] possibilities = new List[THREE][THREE][THREE][THREE];
 
@@ -113,17 +108,13 @@ public class SudokuSolver {
                                     }
                                     if (found) {
                                         int z = 0, zc = 0;
-                                        boolean replace = true;
                                         for (int j = 0; j < THREE; j++) {
-                                            if (board[a][h][i][j] == 0) {
+                                            if (possibilities[a][h][i][j].contains(board[a][b][c][d])) {
                                                 zc++;
                                                 z = j;
                                             }
-                                            if (board[a][h][i][j] == board[a][b][c][d]) {
-                                                replace = false;
-                                            }
                                         }
-                                        if (zc == 1 && replace) {
+                                        if (zc == 1 ) {
                                             board[a][h][i][z] = board[a][b][c][d];
                                             possibilities[a][h][i][z].clear();
                                             updatePossibilities(a,h,i,z);
@@ -149,17 +140,13 @@ public class SudokuSolver {
                                     }
                                     if (found) {
                                         int z = 0, zc = 0;
-                                        boolean replace = true;
                                         for (int j = 0; j < THREE; j++) {
-                                            if (board[h][b][j][i] == 0) {
+                                            if (possibilities[h][b][j][i].contains(board[a][b][c][d])) {
                                                 zc++;
                                                 z = j;
                                             }
-                                            if (board[h][b][j][i] == board[a][b][c][d]) {
-                                                replace = false;
-                                            }
                                         }
-                                        if (zc == 1 && replace) {
+                                        if (zc == 1) {
                                             board[h][b][z][i] = board[a][b][c][d];
                                             possibilities[h][b][z][i].clear();
                                             updatePossibilities(h,b,z,i);
