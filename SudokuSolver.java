@@ -1,28 +1,49 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 public class SudokuSolver {
     static int THREE = 3;
     static int[][][][] board =
             {
+                    {{{8, 0, 0}, {0, 2, 0}, {0, 6, 0}}, {{1, 0, 0}, {0, 4, 0}, {7, 0, 0}}, {{0, 7, 0}, {8, 0, 0}, {0, 0, 0}}},
+                    {{{0, 0, 0}, {2, 4, 0}, {0, 3, 8}}, {{0, 4, 5}, {0, 0, 0}, {0, 9, 8}}, {{0, 0, 0}, {0, 0, 0}, {5, 6, 1}}},
+                    {{{4, 0, 6}, {0, 0, 8}, {0, 0, 0}}, {{0, 0, 0}, {9, 0, 0}, {0, 2, 0}}, {{0, 0, 2}, {7, 4, 0}, {0, 9, 6}}}
+            };
+            /*{
                     {{{5, 3, 0}, {0, 0, 0}, {0, 4, 0}}, {{7, 0, 0}, {4, 0, 0}, {3, 0, 0}}, {{9, 0, 4}, {0, 0, 3}, {0, 0, 7}}},
                     {{{9, 0, 0}, {1, 8, 0}, {0, 0, 0}}, {{0, 4, 5}, {0, 0, 0}, {0, 9, 8}}, {{0, 0, 0}, {0, 0, 0}, {5, 6, 1}}},
                     {{{4, 0, 6}, {0, 0, 8}, {0, 0, 0}}, {{0, 0, 0}, {9, 0, 0}, {0, 2, 0}}, {{0, 0, 2}, {7, 4, 0}, {0, 9, 6}}}
-            };
+            };*/
 
     static List[][][][] possibilities = new List[THREE][THREE][THREE][THREE];
 
     static boolean[][] solved = new boolean[THREE][THREE];
 
     static {
+        Scanner s = new Scanner(System.in);
+        String input = s.next();
+        char [] digits = input.toCharArray();
+        int i = 0;
+        for (int a = 0; a < THREE; a++) {
+            for (int b = 0; b < THREE; b++) {
+                for (int c = 0; c < THREE; c++) {
+                    for (int d = 0; d < THREE; d++) {
+                        board[a][b][c][d]=digits[i]-'0';
+                        i++;
+                    }
+                }
+            }
+        }
+
         for (int a = 0; a < THREE; a++) {
             for (int b = 0; b < THREE; b++) {
                 for (int c = 0; c < THREE; c++) {
                     for (int d = 0; d < THREE; d++) {
                         possibilities[a][b][c][d]= new ArrayList<Integer>();
                         if(board[a][b][c][d]==0) {
-                            for (int i = 1; i < 10; i++) {
+                            for (i = 1; i < 10; i++) {
                                 possibilities[a][b][c][d].add(Integer.valueOf(i));
                             }
                         }
@@ -69,6 +90,7 @@ public class SudokuSolver {
                 }
             }
 
+            stateChanged=true;
             while (check() && stateChanged) {
                 stateChanged = false;
                 for (int a = 0; a < THREE; a++) {
@@ -150,6 +172,33 @@ public class SudokuSolver {
         }
         System.out.println("===== SOLUTION =====");
         print();
+        printPossiblities();
+    }
+
+    private static void printPossiblities() {
+        {
+            for (int a = 0; a < THREE; a++) {
+                for (int b = 0; b < THREE; b++) {
+                    for (int c = 0; c < THREE; c++) {
+                        for (int d = 0; d < THREE; d++) {
+                            System.out.print("[");
+                            for(int i=0;i<9;i++) {
+                                if(i<possibilities[a][c][b][d].size()) {
+                                    System.out.print(possibilities[a][c][b][d].get(i));
+                                }
+                                else {
+                                    System.out.print(" ");
+                                }
+                            }
+                            System.out.print("]");
+                        }
+                        System.out.print("  ");
+                    }
+                    System.out.println();
+                }
+                System.out.println();
+            }
+        }
     }
 
     private static void updatePossibilities(int A, int B, int C, int D) {
