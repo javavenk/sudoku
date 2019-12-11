@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
+//900050700427100000000030000630009040000684000050200019000020000000003856008060002
 public class SudokuSolver {
     static int THREE = 3;
     static int[][][][] board =
@@ -63,12 +63,16 @@ public class SudokuSolver {
             }
         }
 
-        boolean stateChanged = true;
+        boolean stateChanged = true, possibilityUpdated = true, cellSolved = true;
 
         while (check() && stateChanged) {
 
-            while (check() && stateChanged) {
-                stateChanged = false;
+            stateChanged = false;
+            possibilityUpdated = true;
+
+            while (check() && (possibilityUpdated || cellSolved)) {
+                possibilityUpdated = false;
+                cellSolved = false;
                 for (int a = 0; a < THREE; a++) {
                     for (int b = 0; b < THREE; b++) {
                         for (int c = 0; c < THREE; c++) {
@@ -78,6 +82,7 @@ public class SudokuSolver {
                                     possibilities[a][b][c][d].remove(0);
                                     updatePossibilities(a, b, c, d);
                                     stateChanged = true;
+                                    possibilityUpdated = true;
                                 }
                             }
                         }
@@ -85,9 +90,10 @@ public class SudokuSolver {
                 }
             }
 
-            stateChanged=true;
-            while (check() && stateChanged) {
-                stateChanged = false;
+            cellSolved = true;
+            while (check() && (possibilityUpdated || cellSolved)) {
+                possibilityUpdated = false;
+                cellSolved = false;
                 for (int a = 0; a < THREE; a++) {
                     for (int b = 0; b < THREE; b++) {
                         for (int c = 0; c < THREE; c++) {
@@ -119,6 +125,7 @@ public class SudokuSolver {
                                             possibilities[a][h][i][z].clear();
                                             updatePossibilities(a,h,i,z);
                                             stateChanged = true;
+                                            cellSolved = true;
                                             markSolved(a, h);
                                         }
                                     }
@@ -151,6 +158,7 @@ public class SudokuSolver {
                                             possibilities[h][b][z][i].clear();
                                             updatePossibilities(h,b,z,i);
                                             stateChanged = true;
+                                            cellSolved = true;
                                             markSolved(h, b);
                                         }
                                     }
