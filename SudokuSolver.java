@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 //900050700427100000000030000630009040000684000050200019000020000000003856008060002
+//006000008132500900000004203007300200000000000008002100801900000004008693900000400
 public class SudokuSolver {
     static int THREE = 3;
     static int[][][][] board =
@@ -63,104 +64,26 @@ public class SudokuSolver {
             }
         }
 
-        boolean stateChanged = true, possibilityUpdated = true, cellSolved = true;
+        boolean previousMainStepStateChanged = true, currentMainStepStateChanged, subStepStateChanged;
 
-        while (check() && stateChanged) {
+        while (check() && previousMainStepStateChanged) {
 
-            stateChanged = false;
-            possibilityUpdated = true;
+            currentMainStepStateChanged = false;
 
-            while (check() && (possibilityUpdated || cellSolved)) {
-                possibilityUpdated = false;
-                cellSolved = false;
-                for (int a = 0; a < THREE; a++) {
-                    for (int b = 0; b < THREE; b++) {
-                        for (int c = 0; c < THREE; c++) {
-                            for (int d = 0; d < THREE; d++) {
-                                if (board[a][b][c][d] == 0 && possibilities[a][b][c][d].size() == 1) {
-                                    board[a][b][c][d] = (Integer) possibilities[a][b][c][d].get(0);
-                                    possibilities[a][b][c][d].remove(0);
-                                    updatePossibilities(a, b, c, d);
-                                    stateChanged = true;
-                                    possibilityUpdated = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            cellSolved = true;
-            while (check() && (possibilityUpdated || cellSolved)) {
-                possibilityUpdated = false;
-                cellSolved = false;
-                for (int a = 0; a < THREE; a++) {
-                    for (int b = 0; b < THREE; b++) {
-                        for (int c = 0; c < THREE; c++) {
-                            for (int d = 0; d < THREE; d++) {
-                                if (board[a][b][c][d] != 0) {
-                                    boolean found = false;
-                                    int h = 0, i = 0;
-                                    for (int e = (b + 1) % THREE; e != b && !found; e = (e + 1) % THREE) {
-                                        for (int f = (c + 1) % THREE; f != c && !found; f = (f + 1) % THREE) {
-                                            for (int g = 0; g < THREE && !found; g++) {
-                                                if (board[a][b][c][d] == board[a][e][f][g]) {
-                                                    found = true;
-                                                    h = THREE - b - e;
-                                                    i = THREE - f - c;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (found) {
-                                        int z = 0, zc = 0;
-                                        for (int j = 0; j < THREE; j++) {
-                                            if (possibilities[a][h][i][j].contains(board[a][b][c][d])) {
-                                                zc++;
-                                                z = j;
-                                            }
-                                        }
-                                        if (zc == 1 ) {
-                                            board[a][h][i][z] = board[a][b][c][d];
-                                            possibilities[a][h][i][z].clear();
-                                            updatePossibilities(a,h,i,z);
-                                            stateChanged = true;
-                                            cellSolved = true;
-                                            markSolved(a, h);
-                                        }
-                                    }
-
-                                    found = false;
-                                    h = 0;
-                                    i = 0;
-
-                                    for (int e = (a + 1) % THREE; e != a && !found; e = (e + 1) % THREE) {
-                                        for (int f = (d + 1) % THREE; f != d && !found; f = (f + 1) % THREE) {
-                                            for (int g = 0; g < THREE && !found; g++) {
-                                                if (board[a][b][c][d] == board[e][b][g][f]) {
-                                                    found = true;
-                                                    h = THREE - a - e;
-                                                    i = THREE - f - d;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (found) {
-                                        int z = 0, zc = 0;
-                                        for (int j = 0; j < THREE; j++) {
-                                            if (possibilities[h][b][j][i].contains(board[a][b][c][d])) {
-                                                zc++;
-                                                z = j;
-                                            }
-                                        }
-                                        if (zc == 1) {
-                                            board[h][b][z][i] = board[a][b][c][d];
-                                            possibilities[h][b][z][i].clear();
-                                            updatePossibilities(h,b,z,i);
-                                            stateChanged = true;
-                                            cellSolved = true;
-                                            markSolved(h, b);
-                                        }
+            if(previousMainStepStateChanged) {
+                subStepStateChanged = true;
+                while (check() && subStepStateChanged) {
+                    subStepStateChanged = false;
+                    for (int a = 0; a < THREE; a++) {
+                        for (int b = 0; b < THREE; b++) {
+                            for (int c = 0; c < THREE; c++) {
+                                for (int d = 0; d < THREE; d++) {
+                                    if (board[a][b][c][d] == 0 && possibilities[a][b][c][d].size() == 1) {
+                                        board[a][b][c][d] = (Integer) possibilities[a][b][c][d].get(0);
+                                        possibilities[a][b][c][d].remove(0);
+                                        updatePossibilities(a, b, c, d);
+                                        currentMainStepStateChanged = true;
+                                        subStepStateChanged = true;
                                     }
                                 }
                             }
@@ -168,6 +91,87 @@ public class SudokuSolver {
                     }
                 }
             }
+
+            if(previousMainStepStateChanged) {
+                subStepStateChanged = true;
+                while (check() && subStepStateChanged) {
+                    subStepStateChanged = false;
+                    for (int a = 0; a < THREE; a++) {
+                        for (int b = 0; b < THREE; b++) {
+                            for (int c = 0; c < THREE; c++) {
+                                for (int d = 0; d < THREE; d++) {
+                                    if (board[a][b][c][d] != 0) {
+                                        boolean found = false;
+                                        int h = 0, i = 0;
+                                        for (int e = (b + 1) % THREE; e != b && !found; e = (e + 1) % THREE) {
+                                            for (int f = (c + 1) % THREE; f != c && !found; f = (f + 1) % THREE) {
+                                                for (int g = 0; g < THREE && !found; g++) {
+                                                    if (board[a][b][c][d] == board[a][e][f][g]) {
+                                                        found = true;
+                                                        h = THREE - b - e;
+                                                        i = THREE - f - c;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (found) {
+                                            int z = 0, zc = 0;
+                                            for (int j = 0; j < THREE; j++) {
+                                                if (possibilities[a][h][i][j].contains(board[a][b][c][d])) {
+                                                    zc++;
+                                                    z = j;
+                                                }
+                                            }
+                                            if (zc == 1) {
+                                                board[a][h][i][z] = board[a][b][c][d];
+                                                possibilities[a][h][i][z].clear();
+                                                updatePossibilities(a, h, i, z);
+                                                currentMainStepStateChanged = true;
+                                                subStepStateChanged = true;
+                                                markSolved(a, h);
+                                            }
+                                        }
+
+                                        found = false;
+                                        h = 0;
+                                        i = 0;
+
+                                        for (int e = (a + 1) % THREE; e != a && !found; e = (e + 1) % THREE) {
+                                            for (int f = (d + 1) % THREE; f != d && !found; f = (f + 1) % THREE) {
+                                                for (int g = 0; g < THREE && !found; g++) {
+                                                    if (board[a][b][c][d] == board[e][b][g][f]) {
+                                                        found = true;
+                                                        h = THREE - a - e;
+                                                        i = THREE - f - d;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (found) {
+                                            int z = 0, zc = 0;
+                                            for (int j = 0; j < THREE; j++) {
+                                                if (possibilities[h][b][j][i].contains(board[a][b][c][d])) {
+                                                    zc++;
+                                                    z = j;
+                                                }
+                                            }
+                                            if (zc == 1) {
+                                                board[h][b][z][i] = board[a][b][c][d];
+                                                possibilities[h][b][z][i].clear();
+                                                updatePossibilities(h, b, z, i);
+                                                currentMainStepStateChanged = true;
+                                                subStepStateChanged = true;
+                                                markSolved(h, b);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            previousMainStepStateChanged = currentMainStepStateChanged;
         }
         System.out.println("===== SOLUTION =====");
         print();
