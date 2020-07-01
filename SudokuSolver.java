@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+
+import java.util.*;
 
 //900050700427100000000030000630009040000684000050200019000020000000003856008060002
 //006000008132500900000004203007300200000000000008002100801900000004008693900000400
@@ -9,9 +8,9 @@ public class SudokuSolver {
     static int THREE = 3;
     static int[][][][] board =
             {
-                    {{{8, 0, 0}, {0, 2, 0}, {0, 6, 0}}, {{1, 0, 0}, {0, 4, 0}, {7, 0, 0}}, {{0, 7, 0}, {8, 0, 0}, {0, 0, 0}}},
-                    {{{0, 0, 0}, {2, 4, 0}, {0, 3, 8}}, {{0, 4, 5}, {0, 0, 0}, {0, 9, 8}}, {{0, 0, 0}, {0, 0, 0}, {5, 6, 1}}},
-                    {{{4, 0, 6}, {0, 0, 8}, {0, 0, 0}}, {{0, 0, 0}, {9, 0, 0}, {0, 2, 0}}, {{0, 0, 2}, {7, 4, 0}, {0, 9, 6}}}
+                    {{{5,8,6}, {0,0,4}, {0,0,9}}, {{0,7,0}, {9,0,1}, {6,0,8}}, {{0,0,0}, {6, 0, 0}, {0, 0, 0}}},
+                    {{{0, 0, 7}, {9,0,2}, {0,0,5}}, {{0,6,0}, {0, 1, 0}, {0, 9, 0}}, {{0, 0, 0}, {3,0,5}, {0,0,7}}},
+                    {{{0,9,1}, {0, 0, 3}, {0, 0, 0}}, {{0, 4, 0}, {5, 0, 0}, {0, 2, 0}}, {{0, 0, 8}, {0,6, 0}, {4,7,0}}}
             };
 
     static List[][][][] possibilities = new List[THREE][THREE][THREE][THREE];
@@ -19,10 +18,10 @@ public class SudokuSolver {
     static boolean[][] solved = new boolean[THREE][THREE];
 
     static {
+        int i = 0;
         Scanner s = new Scanner(System.in);
         String input = s.next();
         char[] digits = input.toCharArray();
-        int i = 0;
         for (int a = 0; a < THREE; a++) {
             for (int b = 0; b < THREE; b++) {
                 for (int c = 0; c < THREE; c++) {
@@ -168,35 +167,129 @@ public class SudokuSolver {
                     }
                 }
             }
+
+            if (check() && !mainStepStateChanged) {
+                for (int a = 0; a < THREE; a++) {
+                    for (int b = 0; b < THREE; b++) {
+                        {
+                            Map<String, SwordFishSet> sfSets = new HashMap<>();
+                            for (int c = 0; c < THREE; c++) {
+                                for (int d = 0; d < THREE; d++) {
+                                    String possibility = makeKey(possibilities[a][b][c][d]);
+                                    if(possibility!=null && possibility.length()>1) {
+                                        if (sfSets.get(possibility) == null) {
+                                            sfSets.put(possibility, new SwordFishSet(possibility));
+                                        }
+                                        SwordFishSet sfSet = sfSets.get(possibility);
+                                        sfSet.pairs.add(new Pair(c, d));
+                                        sfSets.put(possibility, sfSet);
+                                    }
+                                }
+                            }
+
+                            List<SwordFishSet> sfSetList = new ArrayList<>(sfSets.values());
+                            for (int i = 0; i < sfSetList.size(); i++) {
+                                for (int j = i + 1; j < sfSetList.size(); j++) {
+                                    if (sfSetList.get(i).pairs.size() > sfSetList.get(j).pairs.size()) {
+                                        SwordFishSet temp = sfSetList.get(i);
+                                        sfSetList.set(i, sfSetList.get(j));
+                                        sfSetList.set(j, temp);
+                                    }
+                                }
+                            }
+
+                            int chosenSfSetIndex = -1;
+                            for (int i = 0; i < sfSetList.size(); i++) {
+                                if (sfSetList.get(i).pairs.size() == sfSetList.get(i).possibility.length() && chosenSfSetIndex == -1) {
+                                    chosenSfSetIndex = i;
+                                    break;
+                                }
+                            }
+
+                            if (chosenSfSetIndex != -1) {
+                                SwordFishSet sfSet = sfSetList.get(chosenSfSetIndex);
+                                Pair pair = sfSet.pairs.get(0);
+                                List<Integer> impossibilities = possibilities[a][b][pair.r][pair.c];
+                                for (int i = 0; i < THREE; i++) {
+                                    for (int j = 0; j < THREE; j++) {
+                                        if (!sfSet.find(i, j)) {
+                                            for (int k = 0; k < impossibilities.size(); k++) {
+                                                int index = possibilities[a][b][i][j].indexOf(impossibilities.get(k));
+                                                if (index != -1) {
+                                                    mainStepStateChanged = true;
+                                                    possibilities[a][b][i][j].remove(index);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         System.out.println("===== SOLUTION =====");
         print();
-        printPossiblities();
+        printPossibilities();
     }
 
-    private static void printPossiblities() {
-        {
-            for (int a = 0; a < THREE; a++) {
-                for (int b = 0; b < THREE; b++) {
-                    for (int c = 0; c < THREE; c++) {
-                        for (int d = 0; d < THREE; d++) {
-                            System.out.print("[");
-                            for (int i = 0; i < 9; i++) {
-                                if (i < possibilities[a][c][b][d].size()) {
-                                    System.out.print(possibilities[a][c][b][d].get(i));
-                                } else {
-                                    System.out.print(" ");
-                                }
+    private static String makeKey(List list) {
+        StringBuffer sb = new StringBuffer();
+        for(Object o:list) {
+            sb.append((Integer)o);
+        }
+        return sb.toString();
+    }
+
+    static class SwordFishSet {
+        public String possibility;
+        public List<Pair> pairs = new ArrayList<>();
+
+        public SwordFishSet(String possibility) {
+            this.possibility = possibility;
+        }
+
+        public boolean find(int i, int j) {
+            for (int k = 0; k < pairs.size(); k++) {
+                if (pairs.get(k).r == i && pairs.get(k).c == j) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    static class Pair {
+        public int r, c;
+
+        public Pair(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
+    }
+
+    private static void printPossibilities() {
+        for (int a = 0; a < THREE; a++) {
+            for (int b = 0; b < THREE; b++) {
+                for (int c = 0; c < THREE; c++) {
+                    for (int d = 0; d < THREE; d++) {
+                        System.out.print("[");
+                        for (int i = 0; i < 9; i++) {
+                            if (i < possibilities[a][c][b][d].size()) {
+                                System.out.print(possibilities[a][c][b][d].get(i));
+                            } else {
+                                System.out.print(" ");
                             }
-                            System.out.print("]");
                         }
-                        System.out.print("  ");
+                        System.out.print("]");
                     }
-                    System.out.println();
+                    System.out.print("  ");
                 }
                 System.out.println();
             }
+            System.out.println();
         }
     }
 
@@ -233,15 +326,15 @@ public class SudokuSolver {
         }
     }
 
-    private static void markSolved(int a, int g) {
+    private static void markSolved(int a, int b) {
         int sum = 0;
         for (int c = 0; c < THREE; c++) {
             for (int d = 0; d < THREE; d++) {
-                sum += board[a][g][c][d];
+                sum += board[a][b][c][d];
             }
         }
         if (sum == 45) {
-            solved[a][g] = true;
+            solved[a][b] = true;
         }
     }
 
