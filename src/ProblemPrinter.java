@@ -1,7 +1,7 @@
-public class ProblemPrinter implements Printable {
+public class ProblemPrinter implements Printer {
 
     @Override
-    public void print(Cell cell) {
-        cell.printSolution();
+    public String print(Cell cell) {
+        return cell.printProblem();
     }
 }

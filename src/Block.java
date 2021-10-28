@@ -21,11 +21,13 @@ public class Block {
         }
     }
 
-    public void print(int row,Printable printable) {
+    public String print(int row, Printer printer) {
+        StringBuffer output = new StringBuffer();
         for(int col = 0;col<Board.THREE;col++) {
-            cells[row][col].print(printable);
-            System.out.print(" ");
+            output.append(cells[row][col].print(printer));
+            output.append(" ");
         }
+        return output.toString();
     }
 
     public void updatePossibilites() {

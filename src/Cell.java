@@ -2,7 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Cell implements RepresentationComponent {
-    private int value, blockRow,blockCol,cellRow, cellCol;
+    public int value, blockRow,blockCol,cellRow, cellCol;
     private Set<Integer> possibilities = new HashSet<Integer>();
     private Board board;
 
@@ -26,21 +26,27 @@ public class Cell implements RepresentationComponent {
         possibilities.remove(value);
     }
 
-    public void printSolution() {
-        System.out.print(value);
+    public String printProblem() {
+        return String.valueOf(value);
     }
 
-    public void printPossibilities() {
-        System.out.print("[");
-        for(Integer possibility : possibilities) {
-            System.out.print(possibility + " ");
+    public String printPossibilities() {
+        StringBuffer output = new StringBuffer();
+        String spaces = "";
+        if(possibilities.size()<9) {
+            spaces = String.format("%1$"+(9-possibilities.size())+"s", "");
         }
-        System.out.print("]");
+        output.append("[ ").append(spaces);
+        for(Integer possibility : possibilities) {
+            output.append(possibility).append(" ");
+        }
+        output.append(spaces).append("]");
+        return output.toString();
     }
 
     @Override
-    public void print(Printable printable) {
-        printable.print(this);
+    public String print(Printer printer) {
+        return printer.print(this);
     }
 
     public boolean solved() {

@@ -15,4 +15,18 @@ public class Row {
             System.out.print(cells[i].value + " ");
         }
     }
+
+    public void updatePossibilites() {
+        for(int cellCol = 0;cellCol<Board.NINE;cellCol++) {
+            updatePossibilites(cellCol);
+        }
+    }
+
+    private void updatePossibilites(int cellCol) {
+        for(int cellColInner = 0;cellColInner<Board.NINE;cellColInner++) {
+            if(cellCol!=cellColInner) {
+                cells[cellColInner].removePossibility(cells[cellCol].value);
+            }
+        }
+    }
 }

@@ -39,25 +39,33 @@ public class Board {
         return solved;
     }
 
-    public void print(Printable printable) {
-        System.out.println();
+    public String print(Printer printer) {
+        StringBuffer output = new StringBuffer();
+        output.append("\n");
         for(int boardRow = 0;boardRow<THREE;boardRow++) {
             for(int blockRow=0;blockRow<THREE;blockRow++) {
                 for(int boardCol=0;boardCol<THREE;boardCol++) {
-                    blocks[boardRow][boardCol].print(blockRow,printable);
-                    System.out.print(" ");
+                    output.append(blocks[boardRow][boardCol].print(blockRow, printer));
+                    output.append(" ");
                 }
-                System.out.println();
+                output.append("\n");
             }
-            System.out.println();
+            output.append("\n");
         }
+        return output.toString();
     }
 
     public void updatePossibilities() {
-        for(int boardRow = 0;boardRow<THREE;boardRow++) {
-            for(int boardCol=0;boardCol<THREE;boardCol++) {
-                blocks[boardRow][boardCol].updatePossibilites();
+        for(int blockRow = 0;blockRow<THREE;blockRow++) {
+            for(int blockCol=0;blockCol<THREE;blockCol++) {
+                blocks[blockRow][blockCol].updatePossibilites();
             }
+        }
+        for(int boardRow = 0;boardRow<NINE;boardRow++) {
+            rows[boardRow].updatePossibilites();
+        }
+        for(int boardCol = 0;boardCol<NINE;boardCol++) {
+            columns[boardCol].updatePossibilites();
         }
     }
 

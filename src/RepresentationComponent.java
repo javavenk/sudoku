@@ -1,3 +1,3 @@
 public interface RepresentationComponent {
-    void print(Printable printable);
+    String print(Printer printer);
 }
