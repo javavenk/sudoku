@@ -60,4 +60,35 @@ public class Block {
         }
         return blockStateChanged;
     }
+
+    public Cell nextSolvedCell(int cellRow, int cellCol) {
+        int cellColInnerLoopInit = cellCol;
+        for(int cellRowInner = cellRow;cellRowInner<Board.THREE;cellRowInner++) {
+            for(int cellColInner = cellColInnerLoopInit;cellColInner<Board.THREE;cellColInner++) {
+                cellColInnerLoopInit = 0;
+                if(cells[cellRowInner][cellColInner].solved()) {
+                    return cells[cellRowInner][cellColInner];
+                }
+            }
+        }
+        return null;
+    }
+
+    public Cell ifRowNeeds(int blockRow,int solution) {
+        int unsolvedCellsCount = 0;
+        Cell unsolvedCell = null;
+        for(int blockCol = 0;blockCol<Board.THREE;blockCol++) {
+            if(cells[blockRow][blockCol].solution==solution) {
+                return null;
+            }
+            if(!cells[blockRow][blockCol].solved()) {
+                unsolvedCellsCount++;
+                unsolvedCell = cells[blockRow][blockCol];
+            }
+        }
+        if(unsolvedCellsCount==1) {
+            return unsolvedCell;
+        }
+        return null;
+    }
 }

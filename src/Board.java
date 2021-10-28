@@ -105,6 +105,110 @@ public class Board {
         boolean stateChanged = true;
         while(!this.solved() && stateChanged) {
             stateChanged = this.updateUniquePossibilities();
+            if(!stateChanged) {
+                stateChanged = updateRowScans();
+            }
+            /*if(!stateChanged) {
+                stateChanged = updateColumnScans();
+            }*/
         }
     }
+
+    private boolean updateRowScans() {
+        Cell first, second, third;
+        int cellRowFirst = 0, cellColFirst = 0, cellRowSecond = 0, cellColSecond = 0, cellRowThird;
+        boolean stateChanged = false;
+        for(int blockRow = 0;blockRow<THREE;blockRow++) {
+            for (int blockColFirst = 0; blockColFirst < THREE; blockColFirst++) {
+                first = blocks[blockRow][blockColFirst].nextSolvedCell(cellRowFirst, cellColFirst);
+                while (first != null) {
+                    cellRowFirst=first.cellRow;
+                    cellColFirst=first.cellCol+1;
+                    if(cellColFirst>=THREE) {
+                        cellRowFirst++;
+                        cellColFirst=0;
+                    }
+                    for (int blockColSecond = 0; blockColSecond < THREE; blockColSecond++) {
+                        if(blockColSecond!=blockColFirst) {
+                            cellRowSecond = 0;
+                            cellColSecond = 0;
+                            second = blocks[blockRow][blockColSecond].nextSolvedCell(cellRowSecond, cellColSecond);
+                            while (second != null) {
+                                cellRowSecond = second.cellRow;
+                                cellColSecond = second.cellCol + 1;
+                                if(cellColSecond>=THREE) {
+                                    cellRowSecond++;
+                                    cellColSecond=0;
+                                }
+                                if(first.cellRow!=second.cellRow && first.solution == second.solution) {
+                                    for (int blockColThird = 0; blockColThird < THREE; blockColThird++) {
+                                        if (blockColThird != blockColFirst && blockColThird != blockColSecond) {
+                                            cellRowThird = 3 - first.cellRow - second.cellRow;
+                                            third = blocks[blockRow][blockColThird].ifRowNeeds(cellRowThird,first.solution);
+                                            if (third != null) {
+                                                third.updateUniquePossibility(first.solution);
+                                                stateChanged = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                second = blocks[blockRow][blockColSecond].nextSolvedCell(cellRowSecond, cellColSecond);
+                            }
+                        }
+                    }
+                    first = blocks[blockRow][blockColFirst].nextSolvedCell(cellRowFirst, cellColFirst);
+                }
+            }
+        }
+        return stateChanged;
+    }
+
+   /* private boolean updateColumnScans() {
+        Cell first, second, third;
+        int cellRowFirst = 0, cellColFirst = 0, cellRowSecond = 0, cellColSecond = 0, cellRowThird;
+        boolean stateChanged = false;
+        for(int blockCol = 0;blockCol<THREE;blockCol++) {
+            for (int blockRowFirst = 0; blockRowFirst < THREE; blockRowFirst++) {
+                first = blocks[blockRowFirst][blockCol].nextSolvedCell(cellRowFirst, cellColFirst);
+                while (first != null) {
+                    cellRowFirst=first.cellRow;
+                    cellColFirst=first.cellCol+1;
+                    if(cellColFirst>=THREE) {
+                        cellRowFirst++;
+                        cellColFirst=0;
+                    }
+                    for (int blockRowSecond = 0; blockRowSecond < THREE; blockRowSecond++) {
+                        if(blockRowSecond!=blockRowFirst) {
+                            cellRowSecond = 0;
+                            cellColSecond = 0;
+                            second = blocks[blockRowSecond][blockCol].nextSolvedCell(cellRowSecond, cellColSecond);
+                            while (second != null) {
+                                cellRowSecond = second.cellRow;
+                                cellColSecond = second.cellCol + 1;
+                                if(cellColSecond>=THREE) {
+                                    cellRowSecond++;
+                                    cellColSecond=0;
+                                }
+                                if(first.cellRow!=second.cellRow && first.solution == second.solution) {
+                                    for (int blockRowThird = 0; blockRowThird < THREE; blockRowThird++) {
+                                        if (blockRowThird != blockRowFirst && blockRowThird != blockRowSecond) {
+                                            cellRowThird = 3 - first.cellRow - second.cellRow;
+                                            third = blocks[blockRowThird][blockCol].ifRowNeeds(cellRowThird,first.solution);
+                                            if (third != null) {
+                                                third.updateUniquePossibility(first.solution);
+                                                stateChanged = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                second = blocks[blockRowSecond][blockCol].nextSolvedCell(cellRowSecond, cellColSecond);
+                            }
+                        }
+                    }
+                    first = blocks[blockRowFirst][blockCol].nextSolvedCell(cellRowFirst, cellColFirst);
+                }
+            }
+        }
+        return stateChanged;
+    }*/
 }

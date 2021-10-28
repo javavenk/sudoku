@@ -28,9 +28,6 @@ public class Cell implements RepresentationComponent {
     }
 
     public boolean updateUniquePossibility() {
-        if(blockRow==0 && blockCol == 2 && cellRow == 2 && cellCol == 2) {
-            System.out.println();
-        }
         if(this.solution == 0 && possibilities.size()==1) {
             this.solution = (int) possibilities.toArray()[0];
             this.board.updatePossibilities(blockRow,blockCol,cellRow,cellCol);
@@ -68,5 +65,11 @@ public class Cell implements RepresentationComponent {
 
     public boolean solved() {
         return solution!=0;
+    }
+
+    public void updateUniquePossibility(int solution) {
+        this.possibilities.clear();
+        this.possibilities.add(solution);
+        this.updateUniquePossibility();
     }
 }
