@@ -1,15 +1,18 @@
 public class Solver {
 
-    public static Board board = new Board("000000000000000000000000000000000000123456789123456789123456789123456789999999999");
+    public static Board board = new Board("469700281000280396002096040870600510509800070600000984026000100000020000078500420");
 
     public static void main(String[] args) {
+        System.out.println(board.print(new ProblemPrinter()));
+        board.solve();
         System.out.println(board.print(new SolutionPrinter()));
-        //board.updatePossibilities();
+        System.out.println(board.print(new PossibilitiesPrinter()));
     }
 
     private static void allTests() {
         readsInput();
         printsPossibilities();
+        printsSolution();
         printRows();
         printColumns();
     }
@@ -21,6 +24,12 @@ public class Solver {
     }
 
     private static void printsPossibilities() {
+        System.out.println(" POSSIBILITIES ");
+        Board board = new Board("111111111222222222333333333444444444123456789123456789123456789123456789999999990");
+        System.out.println(board.print(new PossibilitiesPrinter()));
+    }
+
+    public static void printsSolution() {
         System.out.println(" SOLUTION ");
         Board board = new Board("111111111222222222333333333444444444123456789123456789123456789123456789999999990");
         System.out.println(board.print(new SolutionPrinter()));

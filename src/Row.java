@@ -12,7 +12,7 @@ public class Row {
     public void print() {
         System.out.println();
         for(int i = 0;i<Board.NINE;i++) {
-            System.out.print(cells[i].value + " ");
+            System.out.print(cells[i].problem + " ");
         }
     }
 
@@ -25,7 +25,7 @@ public class Row {
     private void updatePossibilites(int cellCol) {
         for(int cellColInner = 0;cellColInner<Board.NINE;cellColInner++) {
             if(cellCol!=cellColInner) {
-                cells[cellColInner].removePossibility(cells[cellCol].value);
+                cells[cellColInner].removePossibility(cells[cellCol].solution);
             }
         }
     }

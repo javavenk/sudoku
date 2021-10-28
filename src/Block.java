@@ -15,7 +15,7 @@ public class Block {
         for (int row = 0; row < Board.THREE; row++) {
             for (int col = 0; col < Board.THREE; col++) {
                 if(row!=cellRow || col!=cellCol) {
-                    cells[row][col].removePossibility(cells[cellRow][cellCol].value);
+                    cells[row][col].removePossibility(cells[cellRow][cellCol].solution);
                 }
             }
         }
@@ -46,5 +46,18 @@ public class Block {
             }
         }
         return solved;
+    }
+
+    public boolean updateUniquePossibilities() {
+        boolean blockStateChanged = false, cellStateChanged;
+        for (int row = 0; row < Board.THREE; row++) {
+            for (int col = 0; col < Board.THREE; col++) {
+                cellStateChanged = cells[row][col].updateUniquePossibility();
+                if(cellStateChanged) {
+                    blockStateChanged = true;
+                }
+            }
+        }
+        return blockStateChanged;
     }
 }

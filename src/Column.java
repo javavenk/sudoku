@@ -10,7 +10,7 @@ public class Column {
     }
 
     public void print(int rowNum) {
-        System.out.print(cells[rowNum].value+ " ");
+        System.out.print(cells[rowNum].problem + " ");
     }
 
     public void updatePossibilites() {
@@ -22,7 +22,7 @@ public class Column {
     private void updatePossibilites(int cellRow) {
         for(int cellRowInner = 0;cellRowInner<Board.NINE;cellRowInner++) {
             if(cellRow!=cellRowInner) {
-                cells[cellRowInner].removePossibility(cells[cellRow].value);
+                cells[cellRowInner].removePossibility(cells[cellRow].solution);
             }
         }
     }

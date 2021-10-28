@@ -17,8 +17,8 @@ public class Board {
                     for(int l=0;l<THREE;l++) {
                         cell = new Cell(puzzle.charAt(i*27+j*9+k*3+l)-'0', i, j, k, l, this);
                         this.blocks[i][j].setCell(cell,k,l);
-                        this.rows[i*3+k].setCell(cell,j*3+l);
-                        this.columns[j*3+l].setCell(cell,i*3+k);
+                        this.rows[i*THREE+k].setCell(cell,j*3+l);
+                        this.columns[j*THREE+l].setCell(cell,i*3+k);
                     }
                 }
             }
@@ -27,6 +27,8 @@ public class Board {
 
     public void updatePossibilities(int blockRow, int blockCol, int cellRow, int cellCol) {
         blocks[blockRow][blockCol].updatePossibilities(cellRow,cellCol);
+        rows[blockRow*THREE+cellRow].updatePossibilites();
+        columns[blockCol*THREE+cellCol].updatePossibilites();
     }
 
     public boolean solved() {
@@ -82,6 +84,27 @@ public class Board {
             for(int j = 0; j<NINE; j++) {
                 columns[j].print(i);
             }
+        }
+    }
+
+    public boolean updateUniquePossibilities() {
+        boolean boardStateChanged = false, blockStateChanged;
+        for(int boardRow = 0;boardRow<THREE;boardRow++) {
+            for(int boardCol=0;boardCol<THREE;boardCol++) {
+                blockStateChanged = blocks[boardRow][boardCol].updateUniquePossibilities();
+                if(blockStateChanged) {
+                    boardStateChanged = true;
+                }
+            }
+        }
+        return boardStateChanged;
+    }
+
+    public void solve() {
+        this.updatePossibilities();
+        boolean stateChanged = true;
+        while(!this.solved() && stateChanged) {
+            stateChanged = this.updateUniquePossibilities();
         }
     }
 }

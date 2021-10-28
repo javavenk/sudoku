@@ -2,23 +2,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Cell implements RepresentationComponent {
-    public int value, blockRow,blockCol,cellRow, cellCol;
+    public int problem, solution, blockRow,blockCol,cellRow, cellCol;
     private Set<Integer> possibilities = new HashSet<Integer>();
     private Board board;
 
     public Cell(int value, int blockRow, int blockCol, int cellRow, int cellCol, Board board) {
-        this.value = value;
+        this.problem = value;
         this.blockRow=blockRow;
         this.blockCol=blockCol;
         this.cellRow = cellRow;
         this.cellCol = cellCol;
         this.board = board;
-        if(this.value==0) {
+        if(this.problem ==0) {
             for (int i = 1; i < 10; i++) {
                 possibilities.add(i);
             }
         } else {
-            possibilities.add(this.value);
+            this.solution = this.problem;
+            this.possibilities.add(this.solution);
         }
     }
 
@@ -26,8 +27,24 @@ public class Cell implements RepresentationComponent {
         possibilities.remove(value);
     }
 
+    public boolean updateUniquePossibility() {
+        if(blockRow==0 && blockCol == 2 && cellRow == 2 && cellCol == 2) {
+            System.out.println();
+        }
+        if(this.solution == 0 && possibilities.size()==1) {
+            this.solution = (int) possibilities.toArray()[0];
+            this.board.updatePossibilities(blockRow,blockCol,cellRow,cellCol);
+            return true;
+        }
+        return false;
+    }
+
     public String printProblem() {
-        return String.valueOf(value);
+        return problem ==0?"[ ]":String.valueOf("["+ problem +"]");
+    }
+
+    public String printSolution() {
+        return solution ==0?"[ ]":String.valueOf("["+ solution +"]");
     }
 
     public String printPossibilities() {
@@ -36,9 +53,9 @@ public class Cell implements RepresentationComponent {
         if(possibilities.size()<9) {
             spaces = String.format("%1$"+(9-possibilities.size())+"s", "");
         }
-        output.append("[ ").append(spaces);
+        output.append("[");
         for(Integer possibility : possibilities) {
-            output.append(possibility).append(" ");
+            output.append(possibility);
         }
         output.append(spaces).append("]");
         return output.toString();
@@ -50,6 +67,6 @@ public class Cell implements RepresentationComponent {
     }
 
     public boolean solved() {
-        return possibilities.size()==1;
+        return solution!=0;
     }
 }
