@@ -26,4 +26,19 @@ public class Column {
             }
         }
     }
+
+    public boolean basicSwordFish(int digit) {
+        int count = 0, chosenRow = -1;
+        for(int cellRow=0;cellRow<Board.NINE;cellRow++) {
+            if(!cells[cellRow].solved() && cells[cellRow].isAPossibility(digit)) {
+                count++;
+                chosenRow = cellRow;
+            }
+        }
+        if(count==1) {
+            cells[chosenRow].updateUniquePossibility(digit);
+            return true;
+        }
+        return false;
+    }
 }

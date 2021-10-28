@@ -72,4 +72,8 @@ public class Cell implements RepresentationComponent {
         this.possibilities.add(solution);
         this.updateUniquePossibility();
     }
+
+    boolean isAPossibility(int digit){
+        return possibilities.contains(digit);
+    }
 }

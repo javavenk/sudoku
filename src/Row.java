@@ -29,4 +29,19 @@ public class Row {
             }
         }
     }
+
+    public boolean basicSwordFish(int digit) {
+        int count = 0, chosenColumn = -1;
+        for(int cellCol=0;cellCol<Board.NINE;cellCol++) {
+            if(!cells[cellCol].solved() && cells[cellCol].isAPossibility(digit)) {
+                count++;
+                chosenColumn = cellCol;
+            }
+        }
+        if(count==1) {
+            cells[chosenColumn].updateUniquePossibility(digit);
+            return true;
+        }
+        return false;
+    }
 }

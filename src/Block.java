@@ -113,4 +113,22 @@ public class Block {
     public Cell get(int cellRow, int cellCol) {
         return cells[cellRow][cellCol];
     }
+
+    public boolean basicSwordFish(int digit) {
+        int count = 0;
+        Cell chosenCell=null;
+        for(int cellRow=0;cellRow<Board.THREE;cellRow++) {
+            for(int cellCol=0;cellCol<Board.THREE;cellCol++) {
+                if(!cells[cellRow][cellCol].solved() && cells[cellRow][cellCol].isAPossibility(digit)) {
+                    count++;
+                    chosenCell = cells[cellRow][cellCol];
+                }
+            }
+        }
+        if(count==1) {
+            chosenCell.updateUniquePossibility(digit);
+            return true;
+        }
+        return false;
+    }
 }

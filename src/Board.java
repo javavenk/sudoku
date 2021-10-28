@@ -106,12 +106,33 @@ public class Board {
         while(!this.solved() && stateChanged) {
             stateChanged = this.updateUniquePossibilities();
             if(!stateChanged) {
+                stateChanged = basicSwordFish();
+            }
+            if(!stateChanged) {
                 stateChanged = updateRowScans();
             }
             if(!stateChanged) {
                 stateChanged = updateColumnScans();
             }
         }
+    }
+
+    private boolean basicSwordFish() {
+        boolean stateChanged = false;
+        for(int digit = 1; digit<=Board.NINE; digit++) {
+            for(Row row:rows) {
+                stateChanged = stateChanged || row.basicSwordFish(digit);
+            }
+            for(Column column:columns) {
+                stateChanged = stateChanged || column.basicSwordFish(digit);
+            }
+            for(int blockRow=0;blockRow<THREE;blockRow++) {
+                for(int blockCol=0;blockCol<THREE;blockCol++) {
+                    stateChanged = stateChanged || blocks[blockRow][blockCol].basicSwordFish(digit);
+                }
+            }
+        }
+        return stateChanged;
     }
 
     private boolean updateRowScans() {
