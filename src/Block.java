@@ -109,4 +109,8 @@ public class Block {
         }
         return null;
     }
+
+    public Cell get(int cellRow, int cellCol) {
+        return cells[cellRow][cellCol];
+    }
 }
