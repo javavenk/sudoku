@@ -74,16 +74,34 @@ public class Block {
         return null;
     }
 
-    public Cell ifRowNeeds(int blockRow,int solution) {
+    public Cell ifRowNeeds(int cellRow,int solution) {
         int unsolvedCellsCount = 0;
         Cell unsolvedCell = null;
-        for(int blockCol = 0;blockCol<Board.THREE;blockCol++) {
-            if(cells[blockRow][blockCol].solution==solution) {
+        for(int cellCol = 0;cellCol<Board.THREE;cellCol++) {
+            if(cells[cellRow][cellCol].solution==solution) {
                 return null;
             }
-            if(!cells[blockRow][blockCol].solved()) {
+            if(!cells[cellRow][cellCol].solved()) {
                 unsolvedCellsCount++;
-                unsolvedCell = cells[blockRow][blockCol];
+                unsolvedCell = cells[cellRow][cellCol];
+            }
+        }
+        if(unsolvedCellsCount==1) {
+            return unsolvedCell;
+        }
+        return null;
+    }
+
+    public Cell ifColumnNeeds(int cellCol, int solution) {
+        int unsolvedCellsCount = 0;
+        Cell unsolvedCell = null;
+        for(int cellRow = 0;cellRow<Board.THREE;cellRow++) {
+            if(cells[cellRow][cellCol].solution==solution) {
+                return null;
+            }
+            if(!cells[cellRow][cellCol].solved()) {
+                unsolvedCellsCount++;
+                unsolvedCell = cells[cellRow][cellCol];
             }
         }
         if(unsolvedCellsCount==1) {

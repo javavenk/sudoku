@@ -108,18 +108,20 @@ public class Board {
             if(!stateChanged) {
                 stateChanged = updateRowScans();
             }
-            /*if(!stateChanged) {
+            if(!stateChanged) {
                 stateChanged = updateColumnScans();
-            }*/
+            }
         }
     }
 
     private boolean updateRowScans() {
         Cell first, second, third;
-        int cellRowFirst = 0, cellColFirst = 0, cellRowSecond = 0, cellColSecond = 0, cellRowThird;
+        int cellRowFirst, cellColFirst, cellRowSecond, cellColSecond, cellRowThird;
         boolean stateChanged = false;
         for(int blockRow = 0;blockRow<THREE;blockRow++) {
             for (int blockColFirst = 0; blockColFirst < THREE; blockColFirst++) {
+                cellRowFirst=0;
+                cellColFirst=0;
                 first = blocks[blockRow][blockColFirst].nextSolvedCell(cellRowFirst, cellColFirst);
                 while (first != null) {
                     cellRowFirst=first.cellRow;
@@ -141,15 +143,12 @@ public class Board {
                                     cellColSecond=0;
                                 }
                                 if(first.cellRow!=second.cellRow && first.solution == second.solution) {
-                                    for (int blockColThird = 0; blockColThird < THREE; blockColThird++) {
-                                        if (blockColThird != blockColFirst && blockColThird != blockColSecond) {
-                                            cellRowThird = 3 - first.cellRow - second.cellRow;
-                                            third = blocks[blockRow][blockColThird].ifRowNeeds(cellRowThird,first.solution);
-                                            if (third != null) {
-                                                third.updateUniquePossibility(first.solution);
-                                                stateChanged = true;
-                                            }
-                                        }
+                                    int blockColThird = 3 - blockColFirst - blockColSecond;
+                                    cellRowThird = 3 - first.cellRow - second.cellRow;
+                                    third = blocks[blockRow][blockColThird].ifRowNeeds(cellRowThird,first.solution);
+                                    if (third != null) {
+                                        third.updateUniquePossibility(first.solution);
+                                        stateChanged = true;
                                     }
                                 }
                                 second = blocks[blockRow][blockColSecond].nextSolvedCell(cellRowSecond, cellColSecond);
@@ -163,12 +162,14 @@ public class Board {
         return stateChanged;
     }
 
-   /* private boolean updateColumnScans() {
+    private boolean updateColumnScans() {
         Cell first, second, third;
-        int cellRowFirst = 0, cellColFirst = 0, cellRowSecond = 0, cellColSecond = 0, cellRowThird;
+        int cellRowFirst, cellColFirst, cellRowSecond, cellColSecond, cellColThird;
         boolean stateChanged = false;
         for(int blockCol = 0;blockCol<THREE;blockCol++) {
             for (int blockRowFirst = 0; blockRowFirst < THREE; blockRowFirst++) {
+                cellRowFirst=0;
+                cellColFirst=0;
                 first = blocks[blockRowFirst][blockCol].nextSolvedCell(cellRowFirst, cellColFirst);
                 while (first != null) {
                     cellRowFirst=first.cellRow;
@@ -189,16 +190,13 @@ public class Board {
                                     cellRowSecond++;
                                     cellColSecond=0;
                                 }
-                                if(first.cellRow!=second.cellRow && first.solution == second.solution) {
-                                    for (int blockRowThird = 0; blockRowThird < THREE; blockRowThird++) {
-                                        if (blockRowThird != blockRowFirst && blockRowThird != blockRowSecond) {
-                                            cellRowThird = 3 - first.cellRow - second.cellRow;
-                                            third = blocks[blockRowThird][blockCol].ifRowNeeds(cellRowThird,first.solution);
-                                            if (third != null) {
-                                                third.updateUniquePossibility(first.solution);
-                                                stateChanged = true;
-                                            }
-                                        }
+                                if(first.cellCol!=second.cellCol && first.solution == second.solution) {
+                                    int blockRowThird = 3 - blockRowFirst - blockRowSecond;
+                                    cellColThird = 3 - first.cellCol - second.cellCol;
+                                    third = blocks[blockRowThird][blockCol].ifColumnNeeds(cellColThird,first.solution);
+                                    if (third != null) {
+                                        third.updateUniquePossibility(first.solution);
+                                        stateChanged = true;
                                     }
                                 }
                                 second = blocks[blockRowSecond][blockCol].nextSolvedCell(cellRowSecond, cellColSecond);
@@ -210,5 +208,5 @@ public class Board {
             }
         }
         return stateChanged;
-    }*/
+    }
 }
