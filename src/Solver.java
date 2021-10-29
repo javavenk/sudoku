@@ -1,13 +1,36 @@
+import java.util.Scanner;
+
 public class Solver {
 
-    public static Board board = new Board("469700281000280396002096040870600510509800070600000984026000100000020000078500420");
-    // ("530000040700400300904003007900180000045000098000000561406008000000900020002740096");
+    //public static Board board = new Board("469700281000280396002096040870600510509800070600000984026000100000020000078500420");
+    public static String exampleBoardString = "111111111222222222333333333444000000000555000000000666123000000000456000000000789";
+    public static Board exampleBoard = new Board(exampleBoardString);
 
     public static void main(String[] args) {
-        System.out.println(board.print(new ProblemPrinter()));
+
+        System.out.print("\nEXAMPLE LAYOUT\n" + exampleBoard.print(new ProblemPrinter()));
+        System.out.print("NUMERICAL SEQUENCE for the above board : "+exampleBoardString);
+        System.out.print("\n\nType the NUMERICAL SEQUENCE for your SUDOKU in as shown in above example, use 0 for unknown values, and press <ENTER>. \n\n\nYOUR INPUT : ");
+
+        Scanner reader = new Scanner(System.in);
+        String puzzle = reader.nextLine();
+        reader.close();
+
+        if(puzzle ==null || puzzle.length()!=81 || !puzzle.matches("\\d+")) {
+            System.out.println("INVALID BOARD LAYOUT, EXITING...");
+            System.exit(0);
+        }
+
+        Board board = new Board(puzzle);
+
+        System.out.println("\nPROBLEM\n" + board.print(new ProblemPrinter()));
         board.solve();
-        System.out.println(board.print(new SolutionPrinter()));
-        System.out.println(board.print(new PossibilitiesPrinter()));
+        if(board.solved()) {
+            System.out.println("\nSOLUTION\n" + board.print(new SolutionPrinter()));
+        }
+        else {
+            System.out.println("\nSTUCK AT\n" + board.print(new PossibilitiesPrinter()));
+        }
     }
 
     private static void allTests() {

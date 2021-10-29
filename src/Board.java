@@ -1,8 +1,8 @@
 public class Board {
     public static int THREE = 3, NINE = 9;
-    private static Block[][] blocks = new Block[THREE][THREE];
-    private static Row[] rows = new Row[NINE];
-    private static Column[] columns = new Column[NINE];
+    private Block[][] blocks = new Block[THREE][THREE];
+    private Row[] rows = new Row[NINE];
+    private Column[] columns = new Column[NINE];
 
     public Board(String puzzle) {
         Cell cell;
